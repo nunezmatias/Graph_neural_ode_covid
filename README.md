@@ -1,4 +1,34 @@
-# Predicting COVID-19 in the USA via Graph Neural ODE (WIP)
+# Predicting COVID-19 in the USA via Graph Neural ODE (Extended Version)
+
+> **Note:** This repository is a fork of the original work by [Chiara Rosati](https://github.com/ChiaraRosati/Graph_neural_ode_covid). This extended version includes significant enhancements in testing, uncertainty quantification, and visualization.
+
+## Major Upgrades & Features
+
+This fork introduces a comprehensive experimental framework and optimizations:
+
+### 1. Comprehensive Test Suite (Tests 1-8)
+A systematic evaluation pipeline covering:
+- **Test 1:** Latent dimension analysis (0 vs 2 dim).
+- **Test 2:** Generalization to unseen time horizons (Log vs Linear scale).
+- **Test 3:** **Uncertainty Quantification** using "Frozen Dropout" and Dual Confidence Intervals.
+- **Test 4:** Ablation study of Graph Topology (Training without graph edges).
+- **Test 5:** Generalization to completely unseen states (spatial zero-shot).
+- **Test 6:** Long-term forecasting stability.
+- **Test 7 & 8:** Rigorous "Sanity Checks" comparing model vs random baselines and topological shuffling to verify learning capability.
+
+### 2. Optimization & Architecture
+- **Frozen Dropout:** Implementation of Monte Carlo Dropout with frozen masks for consistent uncertainty estimation.
+- **Dual Confidence Intervals:** Simultaneous visualization of Aleatoric (Data) and Epistemic (Model) uncertainty.
+- **Refactored GraphCreator:** Improved graph generation logic and data preprocessing.
+
+### 3. Visualization & Reporting
+- **Interactive HTML Reports:** automatically generated reports for each test case (e.g., `Resultados/test-5/report.html`).
+- **Detailed Metrics:** Automated generation of MSE/MAE plots, loss convergence, and state-by-state comparisons.
+- **Reproducible Scripts:** All experiments are self-contained in the `Resultados/` directory with their own READMEs.
+
+---
+
+## Original Documentation (Chiara Rosati)
 
 ## Folders contents
 
