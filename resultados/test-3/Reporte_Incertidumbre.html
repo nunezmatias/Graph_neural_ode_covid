@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural ODEs Uncertainty Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+
+        .legend {
+            background: #e8f6f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 5px solid #1abc9c;
+        }
+
+        .legend strong {
+            color: #16a085;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Uncertainty Analysis: Neural ODEs</h1>
+    <h2>Full Forecast (Train + Test) with 95% Confidence Intervals</h2>
+
+    <div class="legend">
+        <p><strong>Red Line (Day 180):</strong> Separates the Training period (Left) from the Test/Future period
+            (Right).</p>
+        <p><strong>Blue Band:</strong> 95% Confidence Interval (Quantiles 2.5% - 97.5%). The model asserts with 95%
+            certainty that real cases will fall within this range.</p>
+        <p><strong>Black Dots:</strong> Real observed data. Note how most fall within the band even in the Test zone.
+        </p>
+    </div>
+
+    <div class="grid-container">
+        <!-- New York -->
+        <div class="card">
+            <h3>New York (NY)</h3>
+            <img src="../../plots/test3_uncertainty_full/NY_forecast_fixed.png" alt="NY Forecast">
+        </div>
+
+        <!-- California -->
+        <div class="card">
+            <h3>California (CA)</h3>
+            <img src="../../plots/test3_uncertainty_full/CA_forecast_fixed.png" alt="CA Forecast">
+        </div>
+
+        <!-- Texas -->
+        <div class="card">
+            <h3>Texas (TX)</h3>
+            <img src="../../plots/test3_uncertainty_full/TX_forecast_fixed.png" alt="TX Forecast">
+        </div>
+
+        <!-- Florida -->
+        <div class="card">
+            <h3>Florida (FL)</h3>
+            <img src="../../plots/test3_uncertainty_full/FL_forecast_fixed.png" alt="FL Forecast">
+        </div>
+
+        <!-- Illinois -->
+        <div class="card">
+            <h3>Illinois (IL)</h3>
+            <img src="../../plots/test3_uncertainty_full/IL_forecast_fixed.png" alt="IL Forecast">
+        </div>
+
+        <!-- Ohio -->
+        <div class="card">
+            <h3>Ohio (OH)</h3>
+            <img src="../../plots/test3_uncertainty_full/OH_forecast_fixed.png" alt="OH Forecast">
+        </div>
+
+        <!-- Georgia -->
+        <div class="card">
+            <h3>Georgia (GA)</h3>
+            <img src="../../plots/test3_uncertainty_full/GA_forecast_fixed.png" alt="GA Forecast">
+        </div>
+
+        <!-- North Carolina -->
+        <div class="card">
+            <h3>North Carolina (NC)</h3>
+            <img src="../../plots/test3_uncertainty_full/NC_forecast_fixed.png" alt="NC Forecast">
+        </div>
+
+        <!-- New Jersey -->
+        <div class="card">
+            <h3>New Jersey (NJ)</h3>
+            <img src="../../plots/test3_uncertainty_full/NJ_forecast_fixed.png" alt="NJ Forecast">
+        </div>
+
+        <!-- Virginia -->
+        <div class="card">
+            <h3>Virginia (VA)</h3>
+            <img src="../../plots/test3_uncertainty_full/VA_forecast_fixed.png" alt="VA Forecast">
+        </div>
+    </div>
+
+    <div class="footer">
+        Graph Neural ODE Project - Uncertainty Analysis Report
+    </div>
+
+</body>
+
+</html>

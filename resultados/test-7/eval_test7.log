@@ -1,0 +1,25 @@
+'apple-m4' is not a recognized processor for this target (ignoring processor)
+'apple-m4' is not a recognized processor for this target (ignoring processor)
+=== STARTING COMPREHENSIVE STUDY: TEST 7 ===
+Eigenvalues condition satisfied? false
+
+=== PLOTTING LOSS OVERLAPS ===
+
+Processing case: Full
+Generating forecasts...
+
+Processing case: Isolated
+Generating forecasts...
+
+Processing case: Random
+Generating forecasts...
+
+=== SUMMARY OF RESULTS ===
+3×4 DataFrame
+ Row │ Model     Train_MSE  Short_Test_MSE  Long_Test_MSE
+     │ String    Float64    Float64         Float64
+─────┼────────────────────────────────────────────────────
+   1 │ Full      0.0942238        0.381671       0.482559
+   2 │ Isolated  0.0957557        0.166981       0.320929
+   3 │ Random    0.137089         0.279216       0.824957
+Study Complete.

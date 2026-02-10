@@ -1,0 +1,27 @@
+plots/
+*.jl.cov
+*.jl.*.cov
+*.ji
+*.chi
+
+*.zip
+
+# Ignorar archivos pesados y generados
+*.zip
+*.jld2
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.nb
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.MOV
+Modelos/
+Data/
+Resultados/

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Cases Dynamics Analysis</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-bg: #151922;
+            --text-main: #e0e6ed;
+            --accent-1: #2ea043;
+            /* Tier 1 Green */
+            --accent-2: #e3b341;
+            /* Tier 2 Yellow */
+            --accent-3: #da3633;
+            /* Tier 3 Red */
+            --border: #2d333b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #58a6ff, #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0.7;
+            font-size: 1.2rem;
+        }
+
+        .tier-section {
+            margin-bottom: 60px;
+        }
+
+        .tier-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tier-1 {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+        }
+
+        .tier-2 {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+        }
+
+        .tier-3 {
+            border-color: var(--accent-3);
+            color: var(--accent-3);
+        }
+
+        .plot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .state-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .state-card:hover {
+            transform: translateY(-5px);
+            border-color: #a371f7;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .mse-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .plot-img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Real Cases Dynamics Analysis</h1>
+    <div class="subtitle">Linear Scale Visualization sorted by Model Performance (Test MSE)</div>
+
+    <!-- Tier 1: Top Performance -->
+    <div class="tier-section">
+        <div class="tier-header tier-1">
+            <span>Tier 1: High Precision (MSE < 0.20)</span>
+                    <span style="font-size: 1rem; opacity: 0.7">TX, OH, VA, FL, NJ</span>
+        </div>
+        <div class="plot-grid">
+            <div class="state-card">
+                <div class="card-header"><span>TX (Texas)</span> <span class="mse-badge">MSE: 0.148</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_TX.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>OH (Ohio)</span> <span class="mse-badge">MSE: 0.156</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_OH.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>VA (Virginia)</span> <span class="mse-badge">MSE: 0.181</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_VA.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>FL (Florida)</span> <span class="mse-badge">MSE: 0.185</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_FL.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>NJ (New Jersey)</span> <span class="mse-badge">MSE: 0.198</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_NJ.png" class="plot-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tier 2: Good Generalization -->
+    <div class="tier-section">
+        <div class="tier-header tier-2">
+            <span>Tier 2: Good Generalization (MSE < 0.35)</span>
+                    <span style="font-size: 1rem; opacity: 0.7">CA, NC, IL</span>
+        </div>
+        <div class="plot-grid">
+            <div class="state-card">
+                <div class="card-header"><span>CA (California)</span> <span class="mse-badge">MSE: 0.243</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_CA.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>NC (North Carolina)</span> <span class="mse-badge">MSE: 0.253</span>
+                </div>
+                <img src="test-2/Latent_3/plots/full_pred_NC.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>IL (Illinois)</span> <span class="mse-badge">MSE: 0.324</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_IL.png" class="plot-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tier 3: Challenging Dynamics -->
+    <div class="tier-section">
+        <div class="tier-header tier-3">
+            <span>Tier 3: Challenging Dynamics (MSE > 0.35)</span>
+            <span style="font-size: 1rem; opacity: 0.7">NY, GA</span>
+        </div>
+        <div class="plot-grid">
+            <div class="state-card">
+                <div class="card-header"><span>NY (New York)</span> <span class="mse-badge">MSE: 0.580</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_NY.png" class="plot-img">
+            </div>
+            <div class="state-card">
+                <div class="card-header"><span>GA (Georgia)</span> <span class="mse-badge">MSE: 0.829</span></div>
+                <img src="test-2/Latent_3/plots/full_pred_GA.png" class="plot-img">
+            </div>
+        </div>
+    </div>
+
+    <footer>Generated by Graph Neural ODE Analysis Suite</footer>
+
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+plots/
+*.jl.cov
+*.jl.*.cov
+*.ji
+*.chi
+
+*.zip

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Neural ODE - Research Report</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- MathJax for Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-main: #c9d1d9;
+            --text-header: #ffffff;
+            --accent: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.15);
+            --card-bg: #161b22;
+            --border: #30363d;
+            --success: #2ea043;
+            --danger: #da3633;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-header);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(120deg, #58a6ff, #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .section-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .math-block {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .plot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .plot-card {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .plot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .plot-caption {
+            padding: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+            background: #1f242c;
+        }
+
+        .metric-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .metric-good { background: rgba(46, 160, 67, 0.2); color: #7ee787; }
+        .metric-bad { background: rgba(218, 54, 51, 0.2); color: #f85149; }
+
+        .diagram {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 8px;
+            margin: 1rem 0;
+            opacity: 0.9;
+        }
+        
+        .code-snippet {
+            font-family: 'Fira Code', monospace;
+            background: #0d1117;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ff7b72;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Graph Neural ODE</h1>
+        <div class="subtitle">Spatiotemporal Dynamics of COVID-19 • Final Report • February 2026</div>
+    </header>
+
+    <!-- 1. The Mathematical Framework -->
+    <section class="section-card">
+        <h2>1. The Mathematical Framework</h2>
+        <p>
+            We model the evolution of infection cases across $N$ interconnected states using a <strong>Graph Neural Ordinary Differential Equation (GNN-ODE)</strong>.
+            Unlike standard epidemiological models (SIR) which impose rigid structures, we learn the derivative function $f$ directly from data.
+        </p>
+
+        <h3>The Core Equation</h3>
+        <p>The system state $H(t)$ evolves according to:</p>
+        <div class="math-block">
+            $$ \frac{dH(t)}{dt} = \text{NeuralW}(H(t), G, Z, t) $$
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li>$H(t) \in \mathbb{R}^{N \times 1}$: The vector of infected cases (normalized).</li>
+            <li>$G \in \mathbb{R}^{N \times N}$: The adjacency matrix representing spatial connectivity (population flow).</li>
+            <li>$Z \in \mathbb{R}^{N \times d}$: The <strong>Latent Variables</strong> representing unobserved static features (e.g., local policy, culture).</li>
+            <li>$\text{NeuralW}$: A Graph Neural Network (GNN) parameterized by weights $W$.</li>
+        </ul>
+
+        <h3>Latent Augmentation</h3>
+        <p>
+            Standard Neural ODEs often fail to capture heterogeneous dynamics. We augment the state space:
+            $$ \tilde{H} = [H_{\text{obs}}; Z_{\text{latent}}] $$
+            This allows the ODE to "remember" state-specific traits that determine the trajectory shape.
+        </p>
+    </section>
+
+    <!-- 2. The Journey: Breaking the Barrier -->
+    <section class="section-card">
+        <h2>2. The Journey: From Failure to Breakthrough</h2>
+        
+        <div style="display: flex; gap: 20px; margin-bottom: 2rem;">
+            <div style="flex: 1; padding: 1rem; border-right: 1px solid var(--border);">
+                <h3>Phase 1: The Bottleneck</h3>
+                <p>Initial experiments using a standard GNN architecture (Width 16) hit a hard ceiling.</p>
+                <ul>
+                    <li><strong>Configuration:</strong> 16 Channels, Aggressive Curriculum.</li>
+                    <li><strong>Problem:</strong> Training Loss saturated at <span class="metric-badge metric-bad">0.081</span>.</li>
+                    <li><strong>Diagnosis:</strong> <span style="color:var(--danger)">High Bias (Underfitting)</span>. The network lacked the computational capacity to approximate the complex dynamics.</li>
+                </ul>
+            </div>
+            <div style="flex: 1; padding: 1rem;">
+                <h3>Phase 2: The Solution</h3>
+                <p>We hypothesized that the physical capacity of the neural network was the limiting factor.</p>
+                <ul>
+                    <li><strong>Hypothesis:</strong> Increase Width $16 \to 32$ & Smooth Curriculum.</li>
+                    <li><strong>Result:</strong> Training Loss collapsed to <span class="metric-badge metric-good">0.034</span>.</li>
+                    <li><strong>Outcome:</strong> Test MSE dropped by <strong>61.5%</strong>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="math-block" style="text-align: center;">
+            $$ \text{Gain} = \frac{\text{MSE}_{\text{Test1}} - \text{MSE}_{\text{Test2}}}{\text{MSE}_{\text{Test1}}} \approx 61.5\% $$
+        </div>
+    </section>
+
+    <!-- 3. Visual Evidence -->
+    <section class="section-card">
+        <h2>3. Visual Evidence (Real Cases)</h2>
+        <p>
+            The plots below demonstrate the model's performance on the <strong>Test Set (Days 180-401)</strong>. 
+            <br><em>Note: Data has been denormalized ($e^x - 1$) to show real case counts.</em>
+        </p>
+
+        <h3>Success Stories: Capturing Complexity</h3>
+        <p>States like Ohio (OH) and New York (NY) presented complex oscillatory patterns that the baseline model failed to capture. The refined model (Test-2) tracks them with remarkable precision.</p>
+
+        <div class="plot-grid">
+            <div class="plot-card">
+                <img src="test-2/Latent_3/plots/full_pred_OH.png" alt="Ohio Prediction">
+                <div class="plot-caption"><strong>Ohio (OH)</strong><br><span class="metric-badge metric-good">MSE Improvement: +85%</span></div>
+            </div>
+            <div class="plot-card">
+                <img src="test-2/Latent_3/plots/full_pred_NY.png" alt="NY Prediction">
+                <div class="plot-caption"><strong>New York (NY)</strong><br><span class="metric-badge metric-good">MSE Improvement: +31%</span></div>
+            </div>
+            <div class="plot-card">
+                <img src="test-2/Latent_3/plots/full_pred_NJ.png" alt="NJ Prediction">
+                <div class="plot-caption"><strong>New Jersey (NJ)</strong><br><span class="metric-badge metric-good">MSE Improvement: +64%</span></div>
+            </div>
+             <div class="plot-card">
+                <img src="test-2/Latent_3/plots/full_pred_CA.png" alt="CA Prediction">
+                <div class="plot-caption"><strong>California (CA)</strong><br><span class="metric-badge metric-good">Linear Tracking</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Optimization Landscape -->
+    <section class="section-card">
+        <h2>4. The Optimization Landscape</h2>
+        <p>
+            A key component of success was the <strong>Smoothed Curriculum Learning</strong>. 
+            Instead of forcing the ODE to integrate 20 steps immediately, we slowly expanded the horizon $T$:
+        </p>
+        <p style="text-align: center; font-family: monospace; color: var(--accent);">
+            T = [5, 10, 20, 60, 90, 120, 150, 180]
+        </p>
+        <p>This stabilized the gradients $\frac{dL}{d\theta}$ backpropagated through time (Adjoint Method).</p>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <img src="test-2/Latent_3/plots/final_loss.png" style="max-width: 80%; border-radius: 8px; border: 1px solid var(--border);" alt="Loss Curve">
+            <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.7;">Final Stage Training Loss Convergence</p>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 4rem; opacity: 0.5; font-size: 0.8rem;">
+        &copy; 2026 COVID-19 Modeling Research Team
+    </footer>
+</div>
+
+</body>
+</html>

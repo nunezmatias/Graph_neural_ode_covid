@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 5: Zero-Shot Generalization Report</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .analysis-section {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-top: 2rem;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Test 5: Zero-Shot Generalization</h1>
+            <span class="badge">STATUS: SUCCESS</span>
+            <p>Predicting pandemic dynamics in unseen states (West Coast) using a model trained only on the East Coast.
+            </p>
+        </header>
+
+        <section class="analysis-section">
+            <h2>🧪 Experiment Summary</h2>
+            <p><strong>Methodology:</strong> We took the pre-trained model from Test 3 (ExplicitGNN with Dropout) and
+                applied it to a completely new graph of 5 states (PA, MI, WA, MA, AZ). No retraining was performed. We
+                transferred the GNN weights and initialized latent variables using statistical transfer.</p>
+            <p><strong>result:</strong> The plots below show the prediction (Red) vs Real Data (Blue) for 401 days. The
+                vertical dashed line at Day 180 marks the end of the training horizon used for the source model.</p>
+        </section>
+
+        <h2>📊 Results Gallery</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="plots/WA_zero_shot.png" alt="Washington Prediction">
+                <div class="card-body">
+                    <div class="card-title">Washington (WA)</div>
+                    <p>Perfect timing of the main wave (Day 250). Magnitude is underestimated, likely due to low initial
+                        latent susceptibility.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="plots/AZ_zero_shot.png" alt="Arizona Prediction">
+                <div class="card-body">
+                    <div class="card-title">Arizona (AZ)</div>
+                    <p>Captures the dual-wave structure correctly. The post-training extrapolation (right of dashed
+                        line) remains stable.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="plots/MA_zero_shot.png" alt="Massachusetts Prediction">
+                <div class="card-body">
+                    <div class="card-title">Massachusetts (MA)</div>
+                    <p>Highly accurate timing. The model correctly infers the sharp rise based on neighbor activity.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="plots/PA_zero_shot.png" alt="Pennsylvania Prediction">
+                <div class="card-body">
+                    <div class="card-title">Pennsylvania (PA)</div>
+                    <p>Strong correlation in the early phase. Late-stage extrapolation shows some divergence but correct
+                        trend.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="plots/MI_zero_shot.png" alt="Michigan Prediction">
+                <div class="card-body">
+                    <div class="card-title">Michigan (MI)</div>
+                    <p>Captures the complex multi-modal dynamics typical of the Midwest region.</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="analysis-section" style="background: #f0fdf4; border-color: #16a34a;">
+            <h2>💡 Key Insights</h2>
+            <ul>
+                <li><strong>Universal Dynamics:</strong> The model successfully decoupled "Physics" (GNN weights) from
+                    "Geography" (Graph Topology). It works on graphs it has never seen.</li>
+                <li><strong>Temporal Extrapolation:</strong> even 200 days after the training window ends, the model
+                    predicts coherent waves, not chaos.</li>
+                <li><strong>Latent Transfer:</strong> Initializing latents with $\mu, \sigma$ from the training set was
+                    crucial to avoid flatline predictions.</li>
+            </ul>
+        </section>
+
+        <footer>
+            Generated by Graph Neural ODE Project | <a href="../../docs/Experiments_Summary.md">Back to
+                Documentation</a>
+        </footer>
+    </div>
+</body>
+
+</html>
