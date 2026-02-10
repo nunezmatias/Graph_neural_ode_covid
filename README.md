@@ -15,6 +15,7 @@ A systematic evaluation pipeline covering:
 - **Test 5:** Generalization to completely unseen states (spatial zero-shot).
 - **Test 6:** Long-term forecasting stability.
 - **Test 7 & 8:** Rigorous "Sanity Checks" comparing model vs random baselines and topological shuffling to verify learning capability.
+- **Test 9:** Graph Characterization and Stratified Holdout Selection using PCA/UMAP and closeness centrality.
 
 ### 2. Optimization & Architecture
 - **Frozen Dropout:** Implementation of Monte Carlo Dropout with frozen masks for consistent uncertainty estimation.

@@ -143,3 +143,16 @@ This section details the large-scale experiment (25 Training States) designed to
     1.  **Random Baseline**: Confirms that untrained weights yield MSE > 200 (proving the model learns physics, not just mean).
     2.  **Isolated vs Full (Ablation)**: Runs specific states (PA, TN) in isolation vs connected mode to distinguish between "Intrinsic Resilience" (generalization via weights) and "Active Anchoring" (generalization via neighbors).
 
+---
+
+## 8. Graph Characterization (Test 9)
+
+### `Resultados/test-9/graph_characterization.jl`
+- **Purpose**: Topological profiling of the US states network.
+- **Metrics**: Implementations for Weighted Degree, Betweenness, Eigenvector, Clustering, and Closeness Centrality.
+- **Holdout Logic**: Implements a constrained stratified sampling algorithm with an auto-repair loop based on Fiedler values.
+
+### `Resultados/test-9/umap_analysis.jl`
+- **Purpose**: Exploratory nonlinear manifold analysis.
+- **Mechanism**: Sweeps through `n_neighbors` and `min_dist` parameters in UMAP to verify cluster stability and visualize the 5D topological space in 2D.
+

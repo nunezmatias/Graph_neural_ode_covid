@@ -365,3 +365,32 @@ julia --project=. Resultados/test-8/evaluate_unseen.jl
 ```
 *Output:* CSV modules and Plots in `Resultados/test-8/plots/`.
 
+---
+
+## 🔄 Transition to Phase 9
+**Reasoning:** Tests 7 and 8 highlighted that performance is a function of graph topology. To scale up to the full US graph and perform professional cross-validation, we need a mathematically sound way to split states, not just manual selection.
+**Hypothesis:** Using topological clustering (PCA/UMAP + KMeans) and a connectivity-aware "Lobotomy Check," we can select a holdout set that is both representative and non-destructive to the training graph.
+
+---
+
+### [Content from Test 9]
+# Test 9: Graph Characterization & Stratified Holdout Selection
+
+## 1. Executive Summary
+**Hypothesis**: We can systematically select 9 holdout states that are topologically representative of the full graph while keeping the 40-state training graph connected.
+
+**Result**: **SUCCESS**.
+- **PCA Embedding**: Explained 79.1% of variance using 5 topological metrics.
+- **Topological Clusters**:
+  - **A_Hubs** (20): High degree/influence (e.g., NY, PA, TX).
+  - **B_Connectors** (22): High clustering/relay (e.g., IA, WI).
+  - **C_Periphery** (7): Bridge role/geographic isolates (e.g., CA, WA).
+- **Final Split**: 40 Training / 9 Holdout.
+- **Integrity**: Training graph remains fully connected with high algebraic connectivity.
+
+## 2. Methodology
+Leveraged `Graphs.jl` and `UMAP.jl` to process the 49-state gravity graph. Replaced k-core with Closeness Centrality to handle the fully-connected nature of the gravity model.
+
+---
+**End of Experimental Log.**
+

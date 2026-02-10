@@ -159,3 +159,21 @@ This document summarizes the three main experimental phases conducted in this pr
 *   **Key Visuals:**
     *   See `Resultados/test-8/README.md` for detailed tables.
 
+---
+
+## 🎯 Phase 9: Test 9 - Graph Characterization & Optimal Holdout
+**Goal:** Mathematically characterize the gravity graph and select a topologically representative holdout set to ensure robust validation.
+
+*   **Methodology: Multi-Metric Clustering**
+    *   **Features:** Weighted Degree, Betweenness, Eigenvector Centrality, Clustering, and Closeness Centrality.
+    *   **Embedding:** PCA (Linear) and UMAP (Nonlinear) parameter sweeps.
+    *   **Clustering:** KMeans (k=3) identifying Hubs, Connectors, and Periphery.
+*   **Outcome: Strategic Holdout Selection.**
+    *   **Representative Set:** Selected 9 states (`AZ, LA, MA, MD, NM, NV, RI, TN, UT`) by sampling 3 from each topological cluster.
+    *   **Constraints:** Satisfied geographic diversity (Census Regions) and structural integrity (Fiedler value check).
+    *   **Integrity:** Verified that removing holdout nodes does not fracture the training graph connectivity.
+*   **Key Visuals:**
+    *   🖼️ **Topological MAP:** `Resultados/test-9/pca_clusters.png` (Linear structure).
+    *   🌀 **Nonlinear Manifold:** `Resultados/test-9/umap_sweep.png` (Clustering stability).
+    *   📜 **Selection Logic:** `Resultados/test-9/holdout_selection.json`.
+
