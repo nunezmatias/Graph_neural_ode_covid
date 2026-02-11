@@ -90,7 +90,7 @@ NAME_TO_CODE = Dict(
 println("Generating US cluster map...")
 
 p = plot(
-    title="Test 9: US States — Topological Cluster Map\n◆ A_Hubs  ■ B_Connectors  ● C_Periphery  (Bold border = Holdout)",
+    title="Test 9: US States — Topological Cluster Map\n◆ A_Hubs  ■ B_Connectors  ● C_Periphery",
     xlabel="Longitude", ylabel="Latitude",
     legend=:bottomright, size=(1100, 700), dpi=200,
     aspect_ratio=1.5,
@@ -114,11 +114,9 @@ for feat in features
 
     cluster = state_cluster[code]
     fill_color = colors_map[cluster]
-    is_holdout = code in holdout_set
-
-    # Border style: thick black for holdout, thin gray for others
-    border_color = is_holdout ? :black : RGBA(0.3, 0.3, 0.3, 0.6)
-    border_width = is_holdout ? 2.5 : 0.8
+    # Border style: uniform for all states
+    border_color = RGBA(0.3, 0.3, 0.3, 0.6)
+    border_width = 0.8
 
     # Label for legend (only first occurrence per cluster)
     lbl = cluster in legend_added ? nothing : cluster
@@ -192,14 +190,11 @@ for feat in features
         continue
     end
 
-    fontsize = code in holdout_set ? 6 : 5
-    fontcolor = code in holdout_set ? :black : RGBA(0.15, 0.15, 0.15, 0.9)
-    annotate!(p, cx, cy, text(code, fontsize, :center, :bold, fontcolor))
+    annotate!(p, cx, cy, text(code, 7, :center, :bold, :black))
 end
 
 # Info text
-holdout_str = join(sort(collect(holdout_set)), ", ")
-annotate!(p, -128, 25.5, text("Holdout (bold border): $holdout_str", 7, :left))
+# Info text removed as requested
 
 map_path = joinpath(OUT_DIR, "cluster_map_us.png")
 savefig(p, map_path)

@@ -148,15 +148,25 @@ This section details the large-scale experiment (25 Training States) designed to
 ## 8. Graph Characterization (Test 9)
 
 ### `Resultados/test-9/graph_characterization.jl`
-- **Purpose**: Topological profiling of the US states network.
-- **Metrics**: Implementations for Weighted Degree, Betweenness, Eigenvector, Clustering, and Closeness Centrality.
-- **Holdout Logic**: Implements a constrained stratified sampling algorithm with an auto-repair loop based on Fiedler values.
+- **Purpose**: Topological profiling of the US states gravity network.
+- **Metrics (5D Feature Vector per State)**:
+    1.  **Weighted Degree** — Total gravity flow ($s_i = \sum_j w_{ij}$). Identifies super-spreader states.
+    2.  **Weighted Betweenness** — Fraction of shortest paths (cost = $1/w_{ij}$) through a node. Uses `Graphs.jl` Dijkstra via `SimpleWeightedGraphs` `weights()` dispatch.
+    3.  **Eigenvector Centrality** — Power-iteration on weighted adjacency. Captures "rich club" integration.
+    4.  **Weighted Clustering** — Barrat et al. (2004) formula with weights normalized to [0, 1]. Measures local triangle intensity.
+    5.  **Weighted Closeness** — Floyd-Warshall shortest paths with inverse-weight distances. Measures global accessibility.
+- **Embedding**: PCA (SVD-based, 79.1% variance in 2D) + KMeans (k=3, 20 restarts).
+- **Holdout Logic**: Constrained stratified sampling (3 per cluster) with geographic diversity constraint and auto-repair loop based on Fiedler values (algebraic connectivity).
 
 ### `Resultados/test-9/umap_analysis.jl`
 - **Purpose**: Exploratory nonlinear manifold analysis.
 - **Mechanism**: Sweeps through `n_neighbors` and `min_dist` parameters in UMAP to verify cluster stability and visualize the 5D topological space in 2D.
+- **Consistency**: Uses the same Z-score normalization as `graph_characterization.jl`.
 
 ### `Resultados/test-9/plot_cluster_map.jl`
 - **Purpose**: Geographic visualization of the topological clusters.
-- **Mechanism**: Downloads a US states GeoJSON and colors each state by its cluster assignment (A_Hubs, B_Connectors, C_Periphery). Holdout states are marked with bold borders.
+- **Mechanism**: Downloads a US states GeoJSON and colors each state by its cluster assignment (A_Hubs, B_Connectors, C_Periphery) with state abbreviation labels.
 
+### `Resultados/test-9/plot_parallel_coordinates.jl`
+- **Purpose**: Cluster signature visualization.
+- **Mechanism**: Loads `metrics_table.csv`, applies Min-Max normalization per feature to [0, 1], and plots parallel coordinates colored by cluster. Reveals the distinct topological "fingerprint" of Hubs (high degree/eigenvector/closeness), Connectors (high clustering), and Periphery (low across all dimensions).

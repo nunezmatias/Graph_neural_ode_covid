@@ -164,17 +164,37 @@ This document summarizes the three main experimental phases conducted in this pr
 ## 🎯 Phase 9: Test 9 - Graph Characterization & Optimal Holdout
 **Goal:** Mathematically characterize the gravity graph and select a topologically representative holdout set to ensure robust validation.
 
-*   **Methodology: Multi-Metric Clustering**
-    *   **Features:** Weighted Degree, Betweenness, Eigenvector Centrality, Clustering, and Closeness Centrality.
-    *   **Embedding:** PCA (Linear) and UMAP (Nonlinear) parameter sweeps.
-    *   **Clustering:** KMeans (k=3) identifying Hubs, Connectors, and Periphery.
+*   **Methodology: Multi-Metric Topological Profiling**
+    For each of the 49 US states we computed a 5-dimensional topological feature vector on the gravity network:
+    1.  **Weighted Degree (Strength):** Total gravity flow $s_i = \sum_j w_{ij}$ — identifies "Super-Spreaders" with highest potential for infection import/export.
+    2.  **Weighted Betweenness Centrality:** Fraction of shortest paths (cost = $1/w_{ij}$) passing through a node — identifies structural "Bridges" connecting distant regions.
+    3.  **Eigenvector Centrality:** Recursive importance based on neighbor importance — captures integration into the network's "rich club" core.
+    4.  **Weighted Clustering Coefficient (Barrat et al.):** Triangle intensity among neighbors — quantifies local redundancy and community cohesion.
+    5.  **Weighted Closeness Centrality:** Reciprocal of total shortest-path distance — measures global accessibility for epidemic diffusion.
+    *   **Embedding:** PCA (Linear, 79.1% variance in 2D) and UMAP (Nonlinear) parameter sweeps.
+    *   **Clustering:** KMeans (k=3) identifying three structural roles:
+
+*   **Cluster Characterization:**
+
+    | Cluster | N | Profile | Role |
+    |---|---|---|---|
+    | **A_Hubs** | 20 | High degree, eigenvector, closeness; low clustering | The "Core" — primary diffusion drivers (NY, PA, IL, FL, TX) |
+    | **B_Connectors** | 22 | Moderate degree; high clustering | The "Fabric" — tightly knit regional communities providing redundancy |
+    | **C_Periphery** | 7 | Low degree, clustering, eigenvector | The "Outliers" — geographically isolated states (CA, OR, WA, ID, MT) |
+
 *   **Outcome: Strategic Holdout Selection.**
     *   **Representative Set:** Selected 9 states (`AZ, LA, MA, MD, NM, NV, RI, TN, UT`) by sampling 3 from each topological cluster.
-    *   **Constraints:** Satisfied geographic diversity (Census Regions) and structural integrity (Fiedler value check).
+    *   **Constraints:** Satisfied geographic diversity (Census Regions) and structural integrity (Fiedler value = 767,735).
     *   **Integrity:** Verified that removing holdout nodes does not fracture the training graph connectivity.
+
+*   **Code Audit (Verified):**
+    *   All 5 metric implementations numerically verified against independent recomputation.
+    *   Betweenness centrality confirmed to use weighted Dijkstra (via `SimpleWeightedGraphs` `weights()` dispatch).
+    *   Z-score normalization verified (column means ≈ 0, stds ≈ 1).
+
 *   **Key Visuals:**
-    *   🖼️ **Topological MAP:** `Resultados/test-9/pca_clusters.png` (Linear structure).
+    *   🖼️ **Topological PCA:** `Resultados/test-9/pca_clusters.png` (Linear structure).
     *   🌀 **Nonlinear Manifold:** `Resultados/test-9/umap_sweep.png` (Clustering stability).
     *   🗺️ **Geographic Cluster Map:** `Resultados/test-9/cluster_map_us.png` (US states colored by cluster).
+    *   📊 **Parallel Coordinates:** `Resultados/test-9/parallel_coordinates.png` (Cluster signatures across all 5 metrics).
     *   📜 **Selection Logic:** `Resultados/test-9/holdout_selection.json`.
-
