@@ -156,3 +156,7 @@ This section details the large-scale experiment (25 Training States) designed to
 - **Purpose**: Exploratory nonlinear manifold analysis.
 - **Mechanism**: Sweeps through `n_neighbors` and `min_dist` parameters in UMAP to verify cluster stability and visualize the 5D topological space in 2D.
 
+### `Resultados/test-9/plot_cluster_map.jl`
+- **Purpose**: Geographic visualization of the topological clusters.
+- **Mechanism**: Downloads a US states GeoJSON and colors each state by its cluster assignment (A_Hubs, B_Connectors, C_Periphery). Holdout states are marked with bold borders.
+

@@ -175,5 +175,6 @@ This document summarizes the three main experimental phases conducted in this pr
 *   **Key Visuals:**
     *   🖼️ **Topological MAP:** `Resultados/test-9/pca_clusters.png` (Linear structure).
     *   🌀 **Nonlinear Manifold:** `Resultados/test-9/umap_sweep.png` (Clustering stability).
+    *   🗺️ **Geographic Cluster Map:** `Resultados/test-9/cluster_map_us.png` (US states colored by cluster).
     *   📜 **Selection Logic:** `Resultados/test-9/holdout_selection.json`.
 

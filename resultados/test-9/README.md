@@ -88,6 +88,12 @@ UMAP embeddings with multiple parameter sets to explore nonlinear structure:
 
 ![UMAP Parameter Sweep](umap_sweep.png)
 
+### Geographic Cluster Map
+
+US states colored by topological cluster. Holdout states are marked with bold borders.
+
+![US Cluster Map](cluster_map_us.png)
+
 ---
 
 ## Outputs
@@ -97,6 +103,7 @@ UMAP embeddings with multiple parameter sets to explore nonlinear structure:
 | `metrics_table.csv` | Full 49-state topological metrics |
 | `pca_clusters.png` | PCA scatter plot with clusters and holdout marked |
 | `umap_sweep.png` | UMAP embeddings with multiple n_neighbors / min_dist |
+| `cluster_map_us.png` | Geographic US map colored by topological cluster |
 | `holdout_selection.json` | Final training (40) and holdout (9) sets |
 
 ## Reproducibility
@@ -108,6 +115,9 @@ julia --project=. Resultados/test-9/graph_characterization.jl
 
 # UMAP visualization sweep
 julia --project=. Resultados/test-9/umap_analysis.jl
+
+# Geographic cluster map
+julia --project=. Resultados/test-9/plot_cluster_map.jl
 ```
 
 **Requirements (Project.toml):** `Graphs`, `SimpleWeightedGraphs`, `CSV`, `DataFrames`, `Plots`, `JSON`, `LinearAlgebra`, `Statistics`, `UMAP`.
