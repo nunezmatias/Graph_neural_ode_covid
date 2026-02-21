@@ -1,0 +1,5 @@
+/Users/matias/Documents/codigo/Graph_neural_ode_covid/Resultados/test-8BIS/plot_losses.jl:19:            if occursin("Loss:", line)
+/Users/matias/Documents/codigo/Graph_neural_ode_covid/Resultados/test-8BIS/plot_losses.jl:20:                # Parse: [Info: Epoch 1, Loss: 1.234
+/Users/matias/Documents/codigo/Graph_neural_ode_covid/Resultados/test-8BIS/plot_losses.jl:22:                    parts = split(line, "Loss: ")
+/Users/matias/Documents/codigo/Graph_neural_ode_covid/Resultados/test-8BIS/README.md:72:> **Script:** `train_40_fast.jl` (Lines 181–end) | **Dropout:** `0.0` (Deterministic) | **Loss:** Mean Absolute Error (MAE)
+/Users/matias/Documents/codigo/Graph_neural_ode_covid/Resultados/test-8BIS/README.md:82:> **Script:** `resume_phase2.jl` | **Dropout:** `0.05` (5% Stochastic Nodes) | **Loss:** MAE

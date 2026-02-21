@@ -129,3 +129,22 @@ Generate the comparative plots seen in the report.
 julia --project=. Resultados/test-7/plot_comprehensive_zeroshot.jl
 ```
 *Output:* Plots in `Resultados/test-7/plots/comparative_zeroshot/`
+
+---
+
+## 5. Audit & Bug Report (Feb 20, 2026)
+
+During a repository-wide code audit, two significant issues were identified in the Test 7 codebase that affect the replicability and interpretation of the results:
+
+### Bug T7-1: Missing Dropout in Fine-Tuning
+The `ExplicitGNN` architecture was originally designed with a `FrozenDropout` layer (rate `0.05`) in Test 2 and Test 3 to enable Monte Carlo Uncertainty Quantification. However, in all three fine-tuning scripts (`fine_tune_full.jl`, `fine_tune_isolated.jl`, `fine_tune_random.jl`), the dropout rate was hardcoded to `0.0`. 
+While this "revealed the Parallel Slope Discovery" (as removing noise makes the optimization trajectory clearer), it means these three models **cannot be used for MC Dropout uncertainty analysis**. If the goal was to eventually calculate the variance/uncertainty of the Full vs Isolated predictions, they must be fine-tuned again with `Dropout=0.05`.
+
+### Bug T7-2: Fragile Data Dependency (`preprocessing.jl`)
+The script `fine_tune_full.jl` directly `include("../../Train/preprocessing.jl")`. This hard-links the Test 7 data pipeline to the global Training pipeline. Changes made to `preprocessing.jl` for future tests will inadvertently alter the conditions of Test 7. Furthermore, the `Isolated` and `Random` scripts are forced to override the graph *after* this include, which is a fragile pattern.
+
+### Resolution Plan
+To fix **Bug T7-1** without discarding the "Parallel Slope" findings:
+1. The training phase does *not* necessarily need to be rerun if we only want point-estimates.
+2. If Uncertainty Quantification (UQ) bands are required for Test 7, the `fine_tune_*.jl` scripts must be updated to `ExplicitGNN(..., 0.05)` and re-executed for 1000 epochs.
+3. The Zero-Shot evaluation script (`counterfactual_generalization_test7b.jl`) must ensure it uses the exact same dropout rate as the trained checkpoints it loads to maintain mathematical correctness.
