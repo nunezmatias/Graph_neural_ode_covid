@@ -47,7 +47,7 @@ target_states = [
 ]
 
 # 2.1 Load Features (using NPZ archive)
-features_raw = NPZ.npzread("Data/data_filtered.npz")
+features_raw = NPZ.npzread("../../Data/data_filtered.npz")
 
 # Verify availability
 missing_states = [s for s in target_states if !haskey(features_raw, s)]
@@ -89,7 +89,7 @@ end
 X_norm = log.(X_tensor .+ 1.0) # Apply global log transform
 
 # 2.3 Build Adjacency for 25 States
-df_adj_full = CSV.read("Data/adj_pop_dist.csv", DataFrame)
+df_adj_full = CSV.read("../../Data/adj_pop_dist.csv", DataFrame)
 # Extract submatrix
 col_names = names(df_adj_full)[2:end] # Skip first col (labels)
 indices = [findfirst(x -> x == s, col_names) for s in target_states]
