@@ -10,7 +10,7 @@ This folder contains Julia scripts designed for training Graph Neural Network (G
 * **`training_custom.jl`**: Contains the model architecture and training loops utilizing a custom, hand-crafted message passing layer. Bias is shared across nodes.
 * **`training_custom_V2.jl`**: Contains the model architecture and training loops utilizing a custom, hand-crafted message passing layer. Bias is node-specific.
 * **`run_training.jl`**: The main execution script. It loads the dataset, builds the necessary adjacency matrix, and initiates the training process.
-* **`run_training_V2.jl`**: The main execution script. Adds a new normalization function for the adjacency matrix where you can choose the weights to assign to self-loops (0 to 1).
+* **`run_training_V2.jl`**: The main execution script for "training_custom_V2.jl". Adds a new normalization function for the adjacency matrix where you can choose the weights to assign to self-loops (0 to 1).
 
 ---
 
