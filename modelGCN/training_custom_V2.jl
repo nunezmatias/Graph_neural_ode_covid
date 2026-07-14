@@ -1,4 +1,3 @@
-# function_train_ensemble.jl
 
 # ==============================================================================
 # 🎛️ CENTRAL CONFIGURATION & STRUCTS 
@@ -10,7 +9,7 @@ const CONFIG = (
     p2_epochs = 100,    p2_lr = 1f-5,     p2_patience = 4,
     p3_cycles = 3,      p3_period = 30,   p3_lr_max = 5f-5,   p3_lr_min = 1f-6,
     p4_cycles = 5,      p4_period = 100,  p4_lr_max = 2f-5,   p4_lr_min = 5f-7,
-    p5_epochs = 2000,   p5_lr = 5f-6,     p5_patience = 30
+    p5_epochs = 3000,   p5_lr = 5f-6,     p5_patience = 30
 )
 
 # Frozen Dropout Layer
@@ -25,7 +24,7 @@ function (d::FrozenDropout)(x, ps, st)
     if st.mask === nothing
         return x, st
     else
-        return (x .* st.mask) / (1 - d.p), st #x .* st.mask, st
+        return (x .* st.mask) / (1 - d.p), st 
     end
 end
 
@@ -129,23 +128,16 @@ end
 cos_lr(ep, mx, mn, t) = mn + 0.5f0 * (mx - mn) * (1.0f0 + cos(Float32(π) * mod(ep - 1, t) / t))
 
 # ==============================================================================
-# 🚀 CORE ENSEMBLE TRAINING FUNCTION
+# 🚀 CORE SINGLE TRAINING FUNCTION
 # ==============================================================================
-function train_model(seed::Int, run_id::Int, save_path)
+function train_model(X_norm::Array{Float32, 3}, A::Matrix{Float32}, tsteps::Vector{Float32}, spls::Matrix, save_path::String; seed::Int=123)
     strt_time = time()
     rng = Random.default_rng()
     Random.seed!(rng, seed)
 
     println("\n" * "="^60)
-    #println("🚀 WORKER $(myid()) | RUN $run_id | SEED $seed 🚀")
+    println("🚀 SINGLE RUN TRAINING | SEED $seed 🚀")
     println("="^60)
-
-    # 1. Access Globally Broadcasted Variables (from passobj in master)
-    X_norm = Main.SHARED_DATA::Array{Float32, 3} #my data array has 3 dimensions
-    #g = Main.SHARED_G::GNNGraph
-    A = Main.SHARED_A::Matrix{Float32}
-    tsteps = Main.SHARED_TSTEPS::Vector{Float32}
-    spls = Main.SHARED_SPLINES::Matrix
 
     n_vars, n_times, n_nodes = size(X_norm)
     latent_dim = CONFIG.latent_dim
@@ -153,7 +145,7 @@ function train_model(seed::Int, run_id::Int, save_path)
     nin_covar = size(spls, 1)
     nin_tot = nin_target + nin_covar + latent_dim
 
-    # 2. ODE & Loss Functions (Scoped to capture X_norm and g without passing them)
+    # ODE & Loss Functions
     function predict_ode(p, t_bounds, gnn_obj, st_obj)
         function dudt(u, p_ode, t)
             u_reshaped = reshape(u, nin_target, n_nodes)
@@ -183,8 +175,8 @@ function train_model(seed::Int, run_id::Int, save_path)
         return mean(abs, target .- pred), st_obj, NamedTuple()
     end
 
-    # 3. Model Initialization
-    tmp_gnn = ExplicitGNN(nin_tot, 64, 1, n_nodes, CONFIG.p_dropout_initial)
+    # Model Initialization
+    tmp_gnn = ExplicitGNN(nin_tot, 64, 1, CONFIG.p_dropout_initial)
     ps_tmp, _ = Lux.setup(rng, tmp_gnn)
     init_latents = randn(rng, Float32, latent_dim, n_nodes)
     ps_init = ComponentArray(gnn=ps_tmp, latent_features=init_latents)
@@ -193,8 +185,8 @@ function train_model(seed::Int, run_id::Int, save_path)
     # ==========================================================================
     # PHASE 1: Temporal Chunking
     # ==========================================================================
-    println("\n[Run $run_id] --- PHASE 1: Temporal Chunking ---")
-    gnn_p1 = ExplicitGNN(nin_tot, 64, 1, n_nodes, CONFIG.p_dropout_initial)
+    println("\n--- PHASE 1: Temporal Chunking ---")
+    gnn_p1 = ExplicitGNN(nin_tot, 64, 1, CONFIG.p_dropout_initial)
     _, st_p1 = Lux.setup(rng, gnn_p1)
     tstate1 = Lux.Training.TrainState(gnn_p1, current_ps, st_p1, Optimisers.AdamW(eta=CONFIG.p1_lr, lambda=CONFIG.p1_wd))
     loss_p1_hist = Float32[]
@@ -220,14 +212,13 @@ function train_model(seed::Int, run_id::Int, save_path)
         tstate1 = tstate1_new
         dt = round(time() - t0, digits=1)
         push!(loss_p1_hist, l)
-        
     end
     current_ps = deepcopy(tstate1.parameters)
 
     # ==========================================================================
     # PHASE 2: Global 400-Day Splicing
     # ==========================================================================
-    println("\n[Run $run_id] --- PHASE 2: Continuous All-Days Splicing ---")
+    println("\n--- PHASE 2: Continuous All-Days Splicing ---")
     tstate2 = Lux.Training.TrainState(gnn_p1, current_ps, st_p1, Optimisers.Adam(CONFIG.p2_lr))
     loss_p2_hist = Float32[]
 
@@ -247,7 +238,7 @@ function train_model(seed::Int, run_id::Int, save_path)
     # ==========================================================================
     # PHASE 3: Cosine Annealing Basin Hunting
     # ==========================================================================
-    println("\n[Run $run_id] --- PHASE 3: Cosine Annealing Basin Hunting ---")
+    println("\n--- PHASE 3: Cosine Annealing Basin Hunting ---")
     p3_epochs = CONFIG.p3_cycles * CONFIG.p3_period
     tstate3 = Lux.Training.TrainState(gnn_p1, current_ps, st_p1, Optimisers.Adam(CONFIG.p3_lr_max))
     loss_p3_hist = Float32[]
@@ -276,8 +267,8 @@ function train_model(seed::Int, run_id::Int, save_path)
     # ==========================================================================
     # PHASE 4: Deterministic Descent (Dropout = 0.0)
     # ==========================================================================
-    println("\n[Run $run_id] --- PHASE 4: Deterministic Descent ---")
-    gnn_p4 = ExplicitGNN(nin_tot, 64, 1, n_nodes, 0.0)
+    println("\n--- PHASE 4: Deterministic Descent ---")
+    gnn_p4 = ExplicitGNN(nin_tot, 64, 1, 0.0)
     _, st_p4 = Lux.setup(rng, gnn_p4)
 
     p4_epochs = CONFIG.p4_cycles * CONFIG.p4_period
@@ -308,7 +299,7 @@ function train_model(seed::Int, run_id::Int, save_path)
     # ==========================================================================
     # PHASE 5: Ultimate Convergence
     # ==========================================================================
-    println("\n[Run $run_id] --- PHASE 5: Final Asymptotic Floor ---")
+    println("\n--- PHASE 5: Final Asymptotic Floor ---")
     tstate5 = Lux.Training.TrainState(gnn_p4, current_ps, st_p4, Optimisers.Adam(CONFIG.p5_lr))
     loss_p5_hist = Float32[]
 
@@ -324,11 +315,11 @@ function train_model(seed::Int, run_id::Int, save_path)
         push!(loss_p5_hist, l)
         
         if i % 10 == 0
-            println("[Run $run_id] Ph5 Final Descent $i/$(CONFIG.p5_epochs) | Loss: $(round(l, digits=5)) | $(dt)s")
+            println("Ph5 Final Descent $i/$(CONFIG.p5_epochs) | Loss: $(round(l, digits=5)) | $(dt)s")
         end
 
         if check_early_stop(loss_p5_hist, CONFIG.p5_patience, 5f-5)
-            println("\n[Run $run_id] >>> FLOOR REACHED AT EPOCH $i <<<")
+            println("\n>>> FLOOR REACHED AT EPOCH $i <<<")
             break
         end
     end
@@ -337,8 +328,8 @@ function train_model(seed::Int, run_id::Int, save_path)
     # ==========================================================================
     # SAVE
     # ==========================================================================
-    param_file = joinpath(save_path, "params_run$(run_id)_seed$(seed).jld2")
-    loss_file = joinpath(save_path, "lossHist_run$(run_id)_seed$(seed).jld2")
+    param_file = joinpath(save_path, "params_customV2.jld2")
+    loss_file = joinpath(save_path, "lossHist_customV2.jld2")
     
     @save param_file ps_final = current_ps
     
@@ -346,7 +337,7 @@ function train_model(seed::Int, run_id::Int, save_path)
     @save loss_file loss_hist
     
     total_hrs = round((time() - strt_time) / 3600, digits=2)
-    println("\n✅ WORKER $(myid()) | RUN $run_id | COMPLETED IN $total_hrs HOURS ✅")
+    println("\n✅ TRAINING COMPLETED IN $total_hrs HOURS ✅")
     
     return true
 end
