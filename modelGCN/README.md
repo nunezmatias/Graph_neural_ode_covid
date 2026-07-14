@@ -46,3 +46,14 @@ Run the following command in your terminal:
 
 ```bash
 julia run_training.jl <save_path>
+```
+
+---
+
+## Challenges
+
+Training with Julia’s built-in GCNConv layer is computationally slow. To address this, I implemented a custom diffusion layer that significantly improves training speed while preserving the desired diffusion behavior.
+
+The main challenge is that the predicted dynamics tend to be highly correlated across nodes. In practice, the model often learns a common “average” trajectory and then scales it differently for each node, rather than capturing truly node-specific dynamics. I investigated the effect of the self-loop weight and found that increasing it leads to more heterogeneous, node-specific predictions. However, the diffusion mechanism becomes weaker and the model loses its ability to effectively propagate information between nodes.
+
+The custom implementation makes use of a shared bias term across all nodes. To increase node-level flexibility, I modified the layer so that each node has its own bias parameters ("custom_V2"). Preliminary results suggest that this approach can achieve a better balance between node-specific behavior and diffusion, although the overall diffusion strength remains relatively weak and needs tuning of the self-loop weights. Work in progress.
