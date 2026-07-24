@@ -11,6 +11,7 @@ This folder contains Julia scripts designed for training Graph Neural Network (G
 * **`training_custom_V2.jl`**: Contains the model architecture and training loops utilizing a custom, hand-crafted message passing layer. Bias is node-specific.
 * **`training_custom_V3.jl`**: Contains the model architecture and training loops utilizing a custom, hand-crafted layer adding two separate terms: W_self (the node dynamic optimization term) and W_neigh (the diffusion across the graph term). Bias is shared across nodes. Minimum ratio of spatial-to-local weights (||W_neigh|| / ||W_self||) is controlled by the parameter reg_ratio, reg_lambda is the Penalty strength multiplier added to the loss function to enforce the target minimum ratio.
 * **`run_training.jl`**: The main execution script. It loads the dataset, builds the necessary adjacency matrix, and initiates the training process. For the matrix normalization function you can choose the weights to assign to self-loops (0 to 1).
+* **`lockdown.jl`**: script to simulate lockdown and generate the diffusion maps. Not very optimized, at *section 2* there is the model definition, you should change it each time with the layer definition of GCN, custom, custom_V2 or custom_V3 through copy paste. Watch out that the custom layers forward pass get the matrix A as input, while GCN the graph g. How to make g is present in the run_training.jl script.
 
 ---
 
