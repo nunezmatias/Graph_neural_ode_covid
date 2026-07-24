@@ -69,22 +69,28 @@ src_idx, dst_idx, vals = findnz(sparse(Float32.(A)))
 g = GNNGraph(src_idx, dst_idx, vals)
 
 # ADJACENCY MATRIX FOR CUSTOM LAYER
-# function col_normalize(mat; self_loops=true)
-#     # matrix has flows origin state on rows, destination on columns
-#     # normalize arriving signals on columns to one
-#     mat = copy(mat)
-#     mat[diagind(mat)] .= self_loops ? 1.0 : 0.0  
-#     col_sums = sum(mat, dims=1)
-#     return Float32.(mat ./ (col_sums .+ 1e-8))
+
+# function controlled_normalize(A; alpha=0.6f0)
+#     A_no_diag = copy(A)
+#     # Remove self-loops entirely for the neighbor calculation
+#     A_no_diag[diagind(A_no_diag)] .= 0.0
+#     # Normalize ONLY the neighbor weights
+#     # matrix has flows origin state on rows, destination on columns, normalize arriving signals on columns to one
+#     col_sums = sum(A_no_diag, dims=1)
+#     A_neigh_norm = Float32.(A_no_diag ./ (col_sums .+ 1e-8))
+#     # Create an Identity matrix
+#     I_mat = Matrix{Float32}(I, size(A)...)
+#     # Blend: alpha * Self + (1 - alpha) * Neighbors
+#     return alpha .* I_mat .+ (1.0f0 - alpha) .* A_neigh_norm
 # end
 
-# A = col_normalize(adj_sub; self_loops=true)
+# A = controlled_normalize(adj_sub; alpha=0.5f0) # Use self-loops = 0 for custom_V3
 
 # ==============================================================================
 # 3. EXECUTE RUN
 # ==============================================================================
 println("\nLoading training function...")
-include("training_custom.jl")
+include("training_custom.jl") # or training_GCN.jl, training_custom_V2.jl etc
 
 println("\nStarting training run...")
 
