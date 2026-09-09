@@ -439,7 +439,7 @@ splines_base = build_splines(X_norm, Int[], lags)  # no lockdown in baseline
 latent_dim = size(ensemble_ps[1].latent_features, 1)
 n_cov = n_vars - 1
 nin_tot = 1 + n_cov + latent_dim
-gnn = ExplicitGNN(nin_tot, 64, 1, 0.0)
+gnn = ExplicitGNN(nin_tot, 128, 1, 0.0)
 _, st_gnn = Lux.setup(rng, gnn)
 
 train_idx = [findfirst(==(s), all_states) for s in train_states]
