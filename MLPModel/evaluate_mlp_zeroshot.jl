@@ -221,7 +221,7 @@ end
 # Initialize Model (Width=64)
 
 println("Initializing GNN (Width 64)...")
-gnn = ExplicitGNN(nin_tot, 64, nout, 0.0) 
+gnn = ExplicitGNN(nin_tot, 128, nout, 0.0) 
 ps_gnn, st_gnn = Lux.setup(rng, gnn)
 latent_features = Lux.glorot_uniform(rng, latent_dim, n_nodes) #|>f64
 ps = ComponentArray(gnn=ps_gnn, latent_features=latent_features)
